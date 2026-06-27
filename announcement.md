@@ -1,5 +1,3 @@
-## Version 0.2A released
+## Version 0.2B released
 
-- New function `\val` for tepesetting the value with specific format and surround with \meta.
-- New dimension `\ttwd` for outputting the dimension of the width of one typewriter letter.
-- Applied `\allowbreak` to the `delimiter` key.
+- New feature: Compressing overlong keys in the `keyval` environment for the `\keys` macro.

@@ -113,7 +113,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %</internal>
 %
 %<*package>
-%<+!driver>\GetIdInfo $Id: docext.dtx v0.2A 2026-06-13 myhsia<myhsia@outlook.com>$
+%<+!driver>\GetIdInfo $Id: docext.dtx v0.2B 2026-06-27 myhsia<myhsia@outlook.com>$
 %<package>  {Extension for documenting the LaTeX source files}
 %<package>\ProvidesExplPackage {\ExplFileName}
 %<!driver>  {\ExplFileDate} {\ExplFileVersion} {\ExplFileDescription}
@@ -182,7 +182,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %
 % \section{User's Interfaces}
 %
-% \begin{function}[added = 2026-06-07, updated = 2026-06-13]{\keys}
+% \begin{function}[added = 2026-06-07, updated = 2026-06-27]{\keys}
 %   \begin{syntax}
 %     \tn{keys} \oarg{options} \marg{comma list}
 %   \end{syntax}
@@ -387,6 +387,18 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %    \end{macrocode}
 % \begin{macro}{\keys}
 % \hologo{LaTeX2e} user's interface for input keys quickly.
+% \begin{variable}{\l_@@_keys_typeset_tl, \l_@@_keys_typeset_box}
+% Variables for storing the output of \cs{@@_keys_aux:nnnnn}.
+%    \begin{macrocode}
+\tl_new:N  \l_@@_keys_typeset_tl
+\box_new:N \l_@@_keys_typeset_box
+\msg_new:nnn { docext } { Overfull ~ \string \keys }
+  {
+    Keys ~ wider ~ than ~ 1.2 \string \marginparwidth \iow_newline:
+    \space\space Exceed ~ the ~ ability ~ of ~ scaling
+  }
+%    \end{macrocode}
+% \end{variable}
 %    \begin{macrocode}
 \DeclareDocumentCommand \keys { O {} m }
   {
@@ -394,13 +406,28 @@ The Current Maintainer of this work is **Mingyu Xia**.
       \keys_set_known:nn { @@ / pkgopt / keys }
         { delimiter = { ,\,\allowbreak }, #1 }
       \keys_set_known:nn { @@ / keys          } {#1}
-      \@@_keys_aux:nnnnn {#2}
-        { \l_@@_keys_emph_int             }
-        { \textup \g_@@_keys_delimiter_tl }
-        { \g_@@_keys_font_tl \ttfamily    }
-        { docolor                         }
-      \tl_if_eq:NnT \@currenvir    { keyval }
-        { \g_@@_keys_font_tl \ttfamily \, = \, }
+      \tl_set:Nn \l_@@_keys_typeset_tl
+        {
+          \@@_keys_aux:nnnnn {#2}
+            { \l_@@_keys_emph_int             }
+            { \textup \g_@@_keys_delimiter_tl }
+            { \g_@@_keys_font_tl \ttfamily    }
+            { docolor                         }
+        }
+      \hbox_set:Nn \l_@@_keys_typeset_box { \l_@@_keys_typeset_tl }
+      \tl_if_eq:NnTF \@currenvir { keyval }
+        {
+          \dim_compare:nNnT
+            { \box_wd:N \l_@@_keys_typeset_box } > { \marginparwidth }
+            {
+              \dim_compare:nNnT
+                { \box_wd:N \l_@@_keys_typeset_box } > { 1.2 \marginparwidth }
+                { \msg_warning:nn { docext } { Overfull ~ \string \keys }    }
+              \box_scale:Nnn \l_@@_keys_typeset_box { 5 / 6 } { 1 }
+            }
+          \box_use_drop:N \l_@@_keys_typeset_box
+          \g_@@_keys_font_tl \ttfamily \, = \,
+        } { \l_@@_keys_typeset_tl }
     \group_end:
   }
 %    \end{macrocode}
