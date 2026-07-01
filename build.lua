@@ -6,8 +6,8 @@
     Basic Information: Do Check Before Push
 --]==========================================================================]--
 module              = "docext"
-version             = "v0.2B"
-date                = "2026-06-27"
+version             = "v0.2C"
+date                = "2026-07-01"
 maintainer          = "Mingyu Xia"
 uploader            = "Mingyu Xia"
 maintainid          = "myhsia"

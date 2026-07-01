@@ -113,7 +113,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %</internal>
 %
 %<*package>
-%<+!driver>\GetIdInfo $Id: docext.dtx v0.2B 2026-06-27 myhsia<myhsia@outlook.com>$
+%<+!driver>\GetIdInfo $Id: docext.dtx v0.2C 2026-07-01 myhsia<myhsia@outlook.com>$
 %<package>  {Extension for documenting the LaTeX source files}
 %<package>\ProvidesExplPackage {\ExplFileName}
 %<!driver>  {\ExplFileDate} {\ExplFileVersion} {\ExplFileDescription}
@@ -169,6 +169,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %   \item [\keys{ratio}] \val{fp num}: Ratio of the boxes' widths
 %   in~\env{codemo} environment (Default: |0.625|).
 % \end{keyval}
+%
 % Apart from configuring the package with the package options, users can
 % also use the \tn{docextset} function within the preamble and the context.
 % \begin{function}[added = 2026-06-07]{\docextset}
@@ -204,6 +205,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %</example>
 % \fi
 % \end{function}
+%
 % \begin{function}[added = 2026-06-13]{\val}
 %   \begin{syntax}
 %     \tn{val} \oarg{options} \marg{comma list}
@@ -214,6 +216,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %   The initial value of the \keys{delimiter} key is \tn{textbar} in this
 %   function.
 % \end{function}
+%
 % \docextset{ratio = .375}
 % \begin{function}[added = 2026-06-07]{\TF}
 %   Shortcut for typeset Boolean-choice value.
@@ -227,6 +230,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %</example>
 % \fi
 % \end{function}
+%
 % \begin{function}[added = 2026-06-13]{\ttwd}
 % \begin{syntax}
 %   \tn{hspace} \tn{\meta{fontsize}ttwd}
@@ -236,6 +240,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %   tiny,  scriptsize, footnotesize, small, normalsize,
 %   large, Large,      LARGE,        huge,  Huge}.
 % \end{function}
+%
 % \docextset{ratio = .625}
 % \noindent \DescribeEnv{codemo, codemo*}
 % Typeset the code on the left hand side and then execute the code in the right
@@ -263,22 +268,82 @@ The Current Maintainer of this work is **Mingyu Xia**.
 % \clearpage \appendix
 %
 % \begin{implementation}
+%
 % \section{The source code}
+%
 % Using |codedoc| as the namespace.
 %    \begin{macrocode}
 %<@@=codedoc>
 %    \end{macrocode}
+%
 % Start the optionlist |package| for \pkg{l3docstrip}.
 %    \begin{macrocode}
 %<*package>
 %    \end{macrocode}
+%
+% \subsection{Variables}
+%
+% \begin{variable}{\l_@@_keys_typeset_tl, \l_@@_keys_typeset_box}
+% Variables for storing the output of \cs{@@_keys_aux:nnnnn}.
+%    \begin{macrocode}
+\tl_new:N  \l_@@_keys_typeset_tl
+\box_new:N \l_@@_keys_typeset_box
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\g_@@_true_tl, \g_@@_false_tl, \g_@@_vbar_tl}
+% Constant variables used in \cs{@@_keys_TF_aux:n}.
+%    \begin{macrocode}
+\tl_const:Nn \g_@@_true_tl  { true  }
+\tl_const:Nn \g_@@_false_tl { false }
+\tl_const:Nn \g_@@_vbar_tl
+  { \sys_if_engine_opentype:TF { \textbar } { | } }
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}
+%   {
+%     \l_@@_codemo_iow,
+%     \l_@@_codemo_ior,
+%     \l_@@_codemo_int,
+%     \l_@@_codemo_name_tl
+%   }
+% Variables used in \cs{@@_codemo_start:} and \cs{@@_codemo_end:Nn}.
+%    \begin{macrocode}
+\iow_new:N   \l_@@_codemo_iow
+\ior_new:N   \l_@@_codemo_ior
+\int_new:N   \l_@@_codemo_int
+\tl_const:Nn \l_@@_codemo_name_tl {\jobname.codemo.vrb}
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{variable}{\l_@@_ttwd_box}
+% Box for saving one typewriter letter temporally.
+%    \begin{macrocode}
+\box_new:N \l_@@_ttwd_box
+%    \end{macrocode}
+% \end{variable}
+%
+% \subsection{Messages} 
+%
+% Raise when the width of the keys is wider than 1.2\tn{marginparwidth}.
+%    \begin{macrocode}
+\msg_new:nnn { docext } { Overfull ~ \string \keys }
+  {
+    Keys ~ wider ~ than ~ 1.2 \string \marginparwidth \iow_newline:
+    \space\space Exceed ~ the ~ ability ~ of ~ scaling
+  }
+%    \end{macrocode}
+%
+% \subsection{Options and configuration}
+%
 % \begin{variable}
 %   {
 %     \l__color_named_docolor_prop,
 %     \g_@@_keys_font_tl,
-%     \g_@@_keys_delimiter_tl,
-%     \g_@@_codemo_ratio_fp
+%     \g_@@_keys_delimiter_tl
 %   }
+% \begin{variable}{\g_@@_codemo_ratio_fp}
 % Key–value definitions of the package options, separate the keys into two
 % groups. The first one, |@@ / pkgopt / keys|, is also used in \tn{keys}.
 %    \begin{macrocode}
@@ -301,11 +366,22 @@ The Current Maintainer of this work is **Mingyu Xia**.
   }
 %    \end{macrocode}
 % \end{variable}
+% \end{variable}
+%
+% \begin{variable}{\l_@@_keys_emph_int}
+% Key–value definitions special for the \tn{keys} macro.
+%    \begin{macrocode}
+\keys_define:nn { @@ / keys }
+  { emph        .int_set:N = \l_@@_keys_emph_int }
+%    \end{macrocode}
+% \end{variable}
+%
 % Process the class options.
 %    \begin{macrocode}
 \ProcessKeyOptions [ @@ / pkgopt / keys,
                      @@ / pkgopt / codemo ]
 %    \end{macrocode}
+%
 % \begin{macro}{\docextset}
 % To control the variables.
 %    \begin{macrocode}
@@ -316,10 +392,14 @@ The Current Maintainer of this work is **Mingyu Xia**.
   }
 %    \end{macrocode}
 % \end{macro}
+%
+% \subsection{Class and package loading / tweaks}
+%
 % Load the dependencies.
 %    \begin{macrocode}
 \RequirePackage { xcolor, enumitem, verbatim }
 %    \end{macrocode}
+%
 % Overwrite \tn{prepare@family@series@update} again under \hologo{pLaTeX} and
 % \hologo{upLaTeX} to resolve the error raised by |\settowidth \MacroIndent| in
 % the \pkg{doc} package.
@@ -351,16 +431,19 @@ The Current Maintainer of this work is **Mingyu Xia**.
     }
   }
 %    \end{macrocode}
+%
 % Patch the font of the \env{macrocode} environment.
 %    \begin{macrocode}
 \hook_gput_code:nnn { cmd / macro@font / after } { . } { \ttfamily }
 %    \end{macrocode}
+%
 % Patch the macro \tn{meta} in the \cls{l3doc} class and the \pkg{doc} package.
 % Since the \cls{l3doc} package has already loaded the \pkg{doc} package,
 % a branch is required.
 %    \begin{macrocode}
 \cs_if_exist:cTF { ver@l3doc.cls }
 %    \end{macrocode}
+%
 % Under the \cls{l3doc} class, surround \cs{hbox:n} to the argument of the
 % kernel function \cs{__codedoc_meta_original:n} of the \tn{meta} macro.
 % Suppress the warning raised by \cls{l3doc} (checking l3syntax), and reset the
@@ -375,6 +458,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
       { \setcounter { section } { 0 } }
   }
 %    \end{macrocode}
+%
 % Under other classes, load the \cls{doc} package then take the same trick as in
 % the \cls{l3doc} class.
 %    \begin{macrocode}
@@ -385,20 +469,11 @@ The Current Maintainer of this work is **Mingyu Xia**.
       { \@@_meta_patch:n { \hbox:n {#1} } }
   }
 %    \end{macrocode}
+%
+% \subsection{User's interfaces}
+% 
 % \begin{macro}{\keys}
 % \hologo{LaTeX2e} user's interface for input keys quickly.
-% \begin{variable}{\l_@@_keys_typeset_tl, \l_@@_keys_typeset_box}
-% Variables for storing the output of \cs{@@_keys_aux:nnnnn}.
-%    \begin{macrocode}
-\tl_new:N  \l_@@_keys_typeset_tl
-\box_new:N \l_@@_keys_typeset_box
-\msg_new:nnn { docext } { Overfull ~ \string \keys }
-  {
-    Keys ~ wider ~ than ~ 1.2 \string \marginparwidth \iow_newline:
-    \space\space Exceed ~ the ~ ability ~ of ~ scaling
-  }
-%    \end{macrocode}
-% \end{variable}
 %    \begin{macrocode}
 \DeclareDocumentCommand \keys { O {} m }
   {
@@ -431,14 +506,8 @@ The Current Maintainer of this work is **Mingyu Xia**.
     \group_end:
   }
 %    \end{macrocode}
-% \begin{variable}{\l_@@_keys_emph_int}
-% Key–value definitions special for the \tn{keys} macro.
-%    \begin{macrocode}
-\keys_define:nn { @@ / keys }
-  { emph        .int_set:N = \l_@@_keys_emph_int }
-%    \end{macrocode}
-% \end{variable}
 % \end{macro}
+%
 % \begin{macro}{\val}
 % \hologo{LaTeX2e} user's interface for input value quickly.
 %    \begin{macrocode}
@@ -459,6 +528,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
   }
 %    \end{macrocode}
 % \end{macro}
+%
 % \begin{macro}{\@@_keys_aux:nnnnn, \@@_keys_emph:n}
 % Auxiliary commands of the \tn{keys} macro.
 % \begin{multicols}{2}
@@ -497,6 +567,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
   }
 %    \end{macrocode}
 % \end{macro}
+%
 % \begin{macro}{\TF, \TTF, \TFF}
 % \hologo{LaTeX2e} user's interface for input Boolean-choice value quickly.
 %    \begin{macrocode}
@@ -505,6 +576,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 \DeclareDocumentCommand \TFF {} { \@@_keys_TF_aux:n { 2 } }
 %    \end{macrocode}
 % \end{macro}
+%
 % \begin{macro}{\@@_keys_TF_aux:n}
 % Auxiliary commands of the \tn{TF}, \tn{TTF}, \tn{TFF} macros.
 %    \begin{macrocode}
@@ -515,16 +587,8 @@ The Current Maintainer of this work is **Mingyu Xia**.
       { \textup \g_@@_vbar_tl } { \ttfamily } { docolor }
   }
 %    \end{macrocode}
-% \begin{variable}{\g_@@_true_tl, \g_@@_false_tl, \g_@@_vbar_tl}
-% Constant variables used in \cs{@@_keys_TF_aux:n}.
-%    \begin{macrocode}
-\tl_const:Nn \g_@@_true_tl  { true  }
-\tl_const:Nn \g_@@_false_tl { false }
-\tl_const:Nn \g_@@_vbar_tl
-  { \sys_if_engine_opentype:TF { \textbar } { | } }
-%    \end{macrocode}
-% \end{variable}
 % \end{macro}
+%
 % \noindent \DescribeEnv{keyval}
 % Itemize-type environment for typesetting the keys. Using the interfaces
 % provided by the \pkg{enumitem} package.
@@ -532,6 +596,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 \newlist{keyval}{itemize}{10}
 \setlist[keyval]{leftmargin = 0pt, labelsep = 0pt}
 %    \end{macrocode}
+%
 % \noindent \DescribeEnv{codemo, codemo*}
 % Environment for typesetting the code within a |verbatim| and a |demo|
 % environment at the same time.
@@ -547,6 +612,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
       { \g_@@_codemo_ratio_fp }
   }
 %    \end{macrocode}
+%
 % \begin{macro}{\@@_codemo_start:, \@@_codemo_end:Nn}
 % Auxiliary commands of the \env{codemo} environment.
 %    \begin{macrocode}
@@ -610,30 +676,10 @@ The Current Maintainer of this work is **Mingyu Xia**.
     \char_set_catcode_ignore:N \%
   }
 %    \end{macrocode}
-% \begin{variable}
-%   {
-%     \l_@@_codemo_iow,
-%     \l_@@_codemo_ior,
-%     \l_@@_codemo_int,
-%     \l_@@_codemo_name_tl
-%   }
-% Variables used in \cs{@@_codemo_start:} and \cs{@@_codemo_end:Nn}.
-%    \begin{macrocode}
-\iow_new:N   \l_@@_codemo_iow
-\ior_new:N   \l_@@_codemo_ior
-\int_new:N   \l_@@_codemo_int
-\tl_const:Nn \l_@@_codemo_name_tl {\jobname.codemo.vrb}
-%    \end{macrocode}
-% \end{variable}
 % \end{macro}
+%
 % \begin{macro}{\ttwd}
 % Dimensions of the width of one typewriter letter under different fontsizes.
-% \begin{variable}{\l_@@_ttwd_box}
-% Box for saving one typewriter letter temporally.
-%    \begin{macrocode}
-\box_new:N \l_@@_ttwd_box
-%    \end{macrocode}
-% \end{variable}
 %    \begin{macrocode}
 \clist_map_inline:nn
   {
@@ -652,14 +698,17 @@ The Current Maintainer of this work is **Mingyu Xia**.
   }
 %    \end{macrocode}
 % \end{macro}
-% End\hskip\ttwd the optionlist |package| for \pkg{l3docstrip}.
+%
+% End the optionlist |package| for \pkg{l3docstrip}.
 %    \begin{macrocode}
 %</package>
 %    \end{macrocode}
+%
 % Restore the namespace.
 %    \begin{macrocode}
 %<@@=>
 %    \end{macrocode}
+%
 % \iffalse
 %<*package>
 %<!driver>\file_input_stop:
