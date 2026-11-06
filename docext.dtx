@@ -113,7 +113,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %</internal>
 %
 %<*package>
-%<+!driver>\GetIdInfo $Id: docext.dtx v0.2C 2026-07-01 myhsia<myhsia@outlook.com>$
+%<+!driver>\GetIdInfo $Id: docext.dtx v0.2D 2026-11-06 myhsia<myhsia@outlook.com>$
 %<package>  {Extension for documenting the LaTeX source files}
 %<package>\ProvidesExplPackage {\ExplFileName}
 %<!driver>  {\ExplFileDate} {\ExplFileVersion} {\ExplFileDescription}
@@ -647,6 +647,14 @@ The Current Maintainer of this work is **Mingyu Xia**.
       { \int_incr:N \l_@@_codemo_int }
 %    \end{macrocode}
 % The typeset part.
+% Both panel widths are arithmetic expressions, so \cs{dim_eval:n} turns each
+% into a single dimension: \tn{setlength} understands the subtraction only
+% with \pkg{calc} loaded, which the \cls{l3doc} class does but
+% \cls{article} does not.
+% The result panel is a \tn{parbox}, which takes its width from its content,
+% so the body starts with \cs{mode_leave_vertical:}: a body that is a single
+% vertical box, as a display-like environment produces, would otherwise leave
+% the frame as wide as that box.
 %    \begin{macrocode}
     \par \smallskip
     \group_begin:
@@ -656,8 +664,11 @@ The Current Maintainer of this work is **Mingyu Xia**.
           \bool_if:NT #1 { \null \skip_horizontal:n { 2\ttwd } }
           \parbox [ c ] [ \l_@@_codemo_int \baselineskip + .48ex ]
             {
-              \fp_eval:n { \bool_if:NTF #1 { 1 } {#2} * .96 }
-              \linewidth \bool_if:NT #1 { -.8pt }
+              \dim_eval:n
+                {
+                  \fp_eval:n { \bool_if:NTF #1 { 1 } {#2} * .96 }
+                  \linewidth \bool_if:NT #1 { -.8pt }
+                }
             } { \small \verbatiminput \l_@@_codemo_name_tl }
         }
       \bool_if:NTF #1
@@ -667,9 +678,12 @@ The Current Maintainer of this work is **Mingyu Xia**.
           \null \skip_horizontal:n { 2\ttwd }
           \parbox [ c ] [ \l_@@_codemo_int \baselineskip + .48ex ]
             {
-              \fp_eval:n { \bool_if:NTF #1 { 1 } { (1 - #2) } * .96 }
-              \linewidth \bool_if:NTF #1 { -.8pt } { - 2\ttwd }
-            } { \file_input:n  { \l_@@_codemo_name_tl }    }
+              \dim_eval:n
+                {
+                  \fp_eval:n { \bool_if:NTF #1 { 1 } { (1 - #2) } * .96 }
+                  \linewidth \bool_if:NTF #1 { -.8pt } { - 2\ttwd }
+                }
+            } { \mode_leave_vertical: \file_input:n  { \l_@@_codemo_name_tl } }
         }
       \par \smallskip
     \group_end:

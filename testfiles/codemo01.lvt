@@ -1,0 +1,47 @@
+\input{regression-test}
+
+\documentclass{article}
+\hfuzz=\maxdimen
+\usepackage{docext}
+
+\begin{document}
+
+\START
+
+% The result panel is a \parbox, so it is as wide as its content, and a body
+% of one vertical box used to shrink it.  The two demos keep their own text,
+% so the sum of the two panel widths is compared: the panels are fixed
+% widths, and the numbers themselves depend on the monospaced font of the
+% engine.
+% The demos stay outside \TEST, because a verbatim body cannot be read from a
+% macro argument.
+
+\def\panelwidth#1#2{%
+  % #1: a vbox holding one codemo, #2: receives the line of panels
+  % the line out of the vbox: \parskip and \smallskip
+  \setbox#1=\vbox{\unvbox#1 \unskip \unskip \global\setbox9=\lastbox}%
+  % the natural width of the line: the two frames and a zero-width \hfill
+  \setbox#2=\hbox{\unhbox9}%
+}
+
+\setbox0=\vbox{\hsize=500pt \linewidth=\hsize
+\begin{codemo}
+plain text
+\end{codemo}
+}
+
+\setbox1=\vbox{\hsize=500pt \linewidth=\hsize
+\begin{codemo}
+\vbox{\hbox{abc}}
+\end{codemo}
+}
+
+\TEST{a text body and a single-box body give the same panel width}{
+  \panelwidth{0}{2}
+  \panelwidth{1}{3}
+  \TYPE{difference: \the\dimexpr\wd2-\wd3\relax}
+}
+
+\END
+
+\end{document}
