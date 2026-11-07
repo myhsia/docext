@@ -50,6 +50,9 @@ It provides
 - An elegant way to typeset the `key-value` list.
 - The `codedemo` enviornment for typesetting the code within a `verbatim` and a
 `demo` environment at the same time.
+- Tagged-PDF output for `codemo`: with `\DocumentMetadata{tagging=on}` the code
+panel is tagged as code, the result panel as a text block, and the frames are
+artifacts.  Under `l3doc`, load `latex-lab-testphase-l3doc` as well.
 
 It fixes the drawbacks of the `doc` package under
 - The engines: `pTeX` and `upTeX`.
@@ -113,7 +116,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %</internal>
 %
 %<*package>
-%<+!driver>\GetIdInfo $Id: docext.dtx v0.2D 2026-11-06 myhsia<myhsia@outlook.com>$
+%<+!driver>\GetIdInfo $Id: docext.dtx v0.2E 2026-11-07 myhsia<myhsia@outlook.com>$
 %<package>  {Extension for documenting the LaTeX source files}
 %<package>\ProvidesExplPackage {\ExplFileName}
 %<!driver>  {\ExplFileDate} {\ExplFileVersion} {\ExplFileDescription}
@@ -123,7 +126,9 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %<package>\tl_greplace_all:Nnn \DocFileDate { / } { - }
 %</package>
 %<*driver>
+\DocumentMetadata{tagging=on,pdfversion=1.7,lang=en-US}
 \documentclass[11pt, letterpaper, cs-break = true]{l3doc}
+\usepackage{latex-lab-testphase-l3doc}
 \usepackage[color = 00498F, ratio = .625]{docext}
 \usepackage{microtype, zref-clever}
 \usepackage[osf, mono = false]{libertine}
@@ -261,6 +266,18 @@ The Current Maintainer of this work is **Mingyu Xia**.
 % \end{quote}
 % The effect is the same as the package options introduction of~\zcref{pkgopt}
 % in this manual.
+%
+% \subsection{Tagged PDF}
+%
+% The \env{codemo} environment cooperates with the \LaTeX{} tagging project.
+% A document that declares
+% \begin{quote}
+% |\DocumentMetadata{tagging=on}|
+% \end{quote}
+% before \tn{documentclass} gets the code panel tagged as code, the result
+% panel as a text block, and the frames around them as artifacts.  Under the
+% \cls{l3doc} class, load \pkg{latex-lab-testphase-l3doc} as well; that package
+% supplies the tagging support of the class itself.
 %
 % \end{documentation}
 %
@@ -532,13 +549,13 @@ The Current Maintainer of this work is **Mingyu Xia**.
 % \begin{macro}{\@@_keys_aux:nnnnn, \@@_keys_emph:n}
 % Auxiliary commands of the \tn{keys} macro.
 % \begin{multicols}{2}
-% \begin{arguments}
+% \begin{itemize}
 %   \item comma list,
 %   \item \# of the element to be emphasised,
 %   \item delimiter,
 %   \item font,
 %   \item color (works only for the key),
-% \end{arguments}
+% \end{itemize}
 % \end{multicols}
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_keys_aux:nnnnn #1#2#3#4#5

@@ -1,0 +1,14 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+\l__codedoc_codemo_iow=\write...
+File: "tagging01.codemo.vrb"  (verbatim)
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line ....
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line ....
+(tagging01.codemo.vrb)
+============================================================
+TEST 1: tagging does not disturb the codemo box
+============================================================
+panel box width: 500.0pt
+============================================================

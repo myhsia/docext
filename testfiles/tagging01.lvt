@@ -1,0 +1,38 @@
+\input{regression-test}
+
+% Tagging is enabled where the engine supports the tagging code.  The
+% transcript is deliberately independent of the engine, so the test also runs
+% on upTeX, where codemo is exercised without tagging.
+\ifdefined\directlua
+  \DocumentMetadata{tagging=on,pdfversion=1.7,lang=en-US}
+\else\ifdefined\XeTeXversion
+  \DocumentMetadata{tagging=on,pdfversion=1.7,lang=en-US}
+\else\ifdefined\pdfoutput
+  \DocumentMetadata{tagging=on,pdfversion=1.7,lang=en-US}
+\fi\fi\fi
+
+\documentclass{article}
+\hfuzz=\maxdimen
+\usepackage{docext}
+
+\begin{document}
+
+\START
+
+% A codemo is kept outside \TEST, because a verbatim body cannot be read from
+% a macro argument.  Tagging inserts marked-content whatsits around the code
+% and the result, so the test checks the assembled box rather than reaching
+% for the last line of its contents.
+\setbox0=\vbox{\hsize=500pt \linewidth=\hsize
+\begin{codemo}
+tagged
+\end{codemo}
+}
+
+\TEST{tagging does not disturb the codemo box}{
+  \TYPE{panel box width: \the\wd0}
+}
+
+\END
+
+\end{document}

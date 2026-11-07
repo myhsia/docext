@@ -17,8 +17,10 @@ latex-lab-dev
 latex-tools-dev
 xelatex-dev
 #
-# l3doc
+# l3doc and tagging
 l3kernel
+latex-lab
+tagpdf
 ## Base
 latex
 ## Required

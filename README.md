@@ -13,6 +13,9 @@ It provides
 - An elegant way to typeset the `key-value` list.
 - The `codedemo` enviornment for typesetting the code within a `verbatim` and a
 `demo` environment at the same time.
+- Tagged-PDF output for `codemo`: with `\DocumentMetadata{tagging=on}` the code
+panel is tagged as code, the result panel as a text block, and the frames are
+artifacts.  Under `l3doc`, load `latex-lab-testphase-l3doc` as well.
 
 It fixes the drawbacks of the `doc` package under
 - The engines: `pTeX` and `upTeX`.
