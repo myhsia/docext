@@ -6,8 +6,8 @@
     Basic Information: Do Check Before Push
 --]==========================================================================]--
 module              = "docext"
-version             = "v0.2E"
-date                = "2026-11-07"
+version             = "v0.2F"
+date                = "2026-11-08"
 maintainer          = "Mingyu Xia"
 uploader            = "Mingyu Xia"
 maintainid          = "myhsia"
@@ -27,7 +27,7 @@ textfiles           = {"README.md", "LICENSE", "*.lua"}
 typesetexe          = "latexmk -pdf -pdflatex=pdflatex-dev"
 typesetruns         = 1
 uploadconfig  = {
-  note              = "",
+  note              = "0.2E is still pending. Please merge this 0.2F upload with the pending 0.2E update; 0.2F fixes the keyval label alignment introduced by the tagging support and should be the current release.",
   announcement_file = "announcement.md",
   pkg               = module,
   version           = version .. " " .. date,

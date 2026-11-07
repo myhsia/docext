@@ -56,6 +56,13 @@ The `arguments` environment is `l3doc`'s, and it passes `enumitem` keys
 (`nolistsep`, `labelsep=*`) that the tagging list code rejects.  The docext
 manual uses `itemize` in that one place; do not patch `arguments` globally.
 
+`keyval` is an enumitem list, and the tagging emulation does not reproduce
+enumitem's widest-label width.  Its `\setlist` pins
+`labelwidth = \marginparwidth` and `labelindent = -\marginparwidth`
+(`\keys` scales a wider label against the same length), so the `=` signs keep
+one column in tagged and untagged documents.  `keyval01.lvt` keeps the list
+compiling under tagging; the visible column is checked in the tagged manual.
+
 ## Conventions
 
 - `%<@@=docext>` names the namespace; private names are `\@@_...`.

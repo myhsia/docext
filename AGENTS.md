@@ -36,6 +36,7 @@ Entry points:
 | `docext.ins` | DocStrip map from the `dtx` blocks to `docext.sty` and `README.md` |
 | `build.lua` | `l3build` configuration: module `docext`, version and date, four test engines, `typesetexe = latexmk -pdf -pdflatex=pdflatex-dev`, the CTAN `uploadconfig`, `update_tag`, and the `docinit_hook` that copies the generated README back to the root |
 | `testfiles/codemo01.lvt` + `.tlg` | panel-width regression for a text body and a one-box body |
+| `testfiles/keyval01.lvt` + `.tlg` | `keyval` compiles under tagging; the visual `=` column is checked in the tagged manual |
 | `testfiles/tagging01.lvt` + `.tlg` (+ `.uptex.tlg`) | `codemo` under `\DocumentMetadata{tagging=on}` where the engine supports tagging; the upTeX transcript is engine-specific because that engine loads `cmex10` |
 | `.github/workflows/test.yaml` | `l3build check --dev` on Ubuntu, macOS and Windows; uploads `build/**/*.diff` and `.fc` on failure |
 | `.github/workflows/release.yaml` | triggered by a push that changes `announcement.md`; runs `l3build tag`, `l3build ctan --dev`, `l3build upload`, creates the date tag and the GitHub release |
@@ -69,6 +70,13 @@ Generated, never edited by hand: `docext.sty`, `README.md`, `docext.pdf`,
 - **`arguments` is an `l3doc` environment, not docext's.** It passes
   `enumitem` keys that the tagging list code rejects.  The docext manual avoids
   it in that one spot; do not redefine it globally just for docext.
+- **`keyval` pins its label width.**  `latex-lab`'s `enumitem` emulation does
+  not reproduce enumitem's widest-label calculation; left at its default, the
+  labels sit at the text margin and the `=` signs lose their column.  The
+  `\setlist[keyval]` therefore sets `labelwidth = \marginparwidth` and
+  `labelindent = -\marginparwidth`; `\keys` already scales a wider label
+  against the same length, so this is the upper bound.  Keep the two values
+  equal, or the value column moves.
 - **`enumitem` is a runtime dependency.** `\setlist[keyval]` and the `keyval`
   environment rely on it; the manual also loads `verbatim` and `xcolor`.
 - **Names use `@@`.** The `dtx` sets `%<@@=docext>` in the implementation; every
@@ -89,6 +97,9 @@ Generated, never edited by hand: `docext.sty`, `README.md`, `docext.pdf`,
 - **The date tag is the release date.** The workflow names the tag after
   `build.lua`'s `date`; a second release on the same day would collide, so move
   the date forward before another release.
+- **`uploadconfig.note` is the CTAN-internal channel.** Use it to ask the CTAN
+  maintainers to merge a pending upload or to explain a patch release.  It is
+  not part of `announcement.md` and never appears in the GitHub release notes.
 
 ## Workflows
 
@@ -124,6 +135,9 @@ confirmation mail; after it processes the package, a local
 - The tagging test is deliberately engine-neutral except for the upTeX
   transcript; when changing `codemo`'s logging, regenerate both the common
   `.tlg` and `tagging01.uptex.tlg`.
+- `keyval01` is a compile smoke test for the list under tagging; the visible
+  `=` column is checked in the tagged manual, where all four keys must share
+  one x position.
 - `l3build ctan` must produce `docext.zip`; the release workflow uploads it.
 
 ## CI

@@ -1,0 +1,33 @@
+\input{regression-test}
+
+% The keyval list code is exercised with tagging where the engine supports it.
+% The visual result, the one = column, is checked in the tagged manual; this
+% test keeps the list compiling on every engine.
+\ifdefined\directlua
+  \DocumentMetadata{tagging=on,pdfversion=1.7,lang=en-US}
+\fi
+
+\documentclass{article}
+\usepackage{docext}
+
+\begin{document}
+
+\START
+
+\ifdefined\directlua
+  \begin{keyval}
+    \item[\keys{color}]\val{l3color}: The color.
+    \item[\keys{delimiter}]\val{string}: Delimiter.
+  \end{keyval}
+\fi
+
+\TEST{the keyval list works with tagging}{
+  \TYPE{keyval: ok}
+}
+
+% The tagging backend needs a shipped page.
+\null\newpage
+
+\END
+
+\end{document}

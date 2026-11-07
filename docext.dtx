@@ -116,7 +116,7 @@ The Current Maintainer of this work is **Mingyu Xia**.
 %</internal>
 %
 %<*package>
-%<+!driver>\GetIdInfo $Id: docext.dtx v0.2E 2026-11-07 myhsia<myhsia@outlook.com>$
+%<+!driver>\GetIdInfo $Id: docext.dtx v0.2F 2026-11-08 myhsia<myhsia@outlook.com>$
 %<package>  {Extension for documenting the LaTeX source files}
 %<package>\ProvidesExplPackage {\ExplFileName}
 %<!driver>  {\ExplFileDate} {\ExplFileVersion} {\ExplFileDescription}
@@ -609,9 +609,21 @@ The Current Maintainer of this work is **Mingyu Xia**.
 % \noindent \DescribeEnv{keyval}
 % Itemize-type environment for typesetting the keys. Using the interfaces
 % provided by the \pkg{enumitem} package.
+%
+% The tagging emulation of \pkg{enumitem} does not compute the widest label
+% the way \pkg{enumitem} does.  The label width is therefore pinned to
+% \tn{marginparwidth}, the width \cs{keys} already scales against, and the
+% label hangs left by the same amount; both tagged and untagged documents
+% then keep one \texttt{=} column.
 %    \begin{macrocode}
 \newlist{keyval}{itemize}{10}
-\setlist[keyval]{leftmargin = 0pt, labelsep = 0pt}
+\setlist[keyval]
+  {
+    leftmargin  = 0pt,
+    labelsep    = 0pt,
+    labelwidth  = \marginparwidth,
+    labelindent = -\marginparwidth,
+  }
 %    \end{macrocode}
 %
 % \noindent \DescribeEnv{codemo, codemo*}

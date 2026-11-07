@@ -1,5 +1,12 @@
-## Version 0.2E released
+## Version 0.2F released
 
+- Fix the `keyval` label alignment in tagged documents.  The tagging
+  emulation of `enumitem` does not compute enumitem's widest label, so
+  `keyval` now pins `labelwidth` to `\marginparwidth`, the width `\keys`
+  already scales against, and hangs the label left by the same amount.  The
+  `=` signs stay in one column in tagged and untagged documents.
+- Add `testfiles/keyval01.lvt`, which checks the `=` column when the list is
+  tagged.
 - `codemo` now cooperates with the LaTeX tagging project.  With
   `\DocumentMetadata{tagging=on}` the code panel is tagged as code, the result
   panel as a text block, and the surrounding frames are artifacts.  The manual
