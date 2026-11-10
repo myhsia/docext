@@ -61,6 +61,19 @@ Generated, never edited by hand: `docext.sty`, `README.md`, `docext.pdf`,
   and builds two `\fbox`/`\parbox` panels.  The result panel starts with
   `\mode_leave_vertical:` so a body that is one vertical box keeps the panel
   width.  A change to the panel must preserve that vertical-mode start.
+- **The `codemo` geometry is canonical here.** Each panel is a
+  `\parbox[c][<n>\baselineskip + .48ex]`, centred vertically, where `<n>` is
+  the line count of the body.  Unstarred, the code panel is
+  `0.96 × ratio × \linewidth` and the result panel
+  `0.96 × (1 − ratio) × \linewidth − 2\ttwd`; starred, both are
+  `0.96 × \linewidth − .8pt`, stacked.  `ratio` is the package option
+  (default `.625`), and the `\fbox` adds `\fboxsep` on each side on top.  A
+  document that reports or asserts a panel size quotes these expressions, not
+  a measured pixel.
+- **`codemo` works in `article`.** The panel widths are arithmetic, so both
+  are evaluated with `\dim_eval:n`; `\setlength` understands the subtraction
+  only with `calc` loaded, which `l3doc` provides and `article` does not.
+  The test therefore uses `\documentclass{article}`.
 - **Tagging is a document property.** The package does not load `tagpdf` and
   must not: tagging is enabled by `\DocumentMetadata{tagging=on}` before
   `\documentclass`.  Under `l3doc`, the document also loads
@@ -138,6 +151,9 @@ confirmation mail; after it processes the package, a local
 - `keyval01` is a compile smoke test for the list under tagging; the visible
   `=` column is checked in the tagged manual, where all four keys must share
   one x position.
+- `codemo01` compares the natural width of the panel line for a text body and
+  for a one-box body; only the difference is printed (`0.0pt`), so one
+  baseline serves every engine.
 - `l3build ctan` must produce `docext.zip`; the release workflow uploads it.
 
 ## CI

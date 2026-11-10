@@ -27,7 +27,8 @@ The package has three interfaces:
 
 - `\keys`, `\val`, `\TF`, `\TTF`, `\TFF`, and the `keyval` environment for
   typesetting key-value lists.  They share `enumitem` and the `keyval` list
-  setup (`\setlist[keyval]{leftmargin=0pt,labelsep=0pt}`).
+  setup (`\setlist[keyval]` pins `labelwidth` and `labelindent` to
+  `\marginparwidth`, with no left margin and no label separation).
 - `codemo`/`codemo*`, which write a verbatim body to
   `\jobname.codemo.vrb`, then typeset the code in a monospaced `\parbox` and
   execute the body in a second `\parbox` inside `\fbox` frames.  The width
